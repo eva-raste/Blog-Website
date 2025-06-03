@@ -1,0 +1,23 @@
+<h2>Create New Blog Post</h2>
+
+<form method="post" enctype="multipart/form-data">
+  {% csrf_token %}
+  
+  <input type="text" name="title" placeholder="Title" required><br><br>
+
+  <label for="category">Category:</label>
+  <select name="category" required>
+    <option value="">-- Select Category --</option>
+    {% for category in categories %}
+      <option value="{{ category.id }}">{{ category.name }}</option>
+    {% endfor %}
+  </select>
+<br><br>
+  <textarea name="description" placeholder="Description" required></textarea><br><br>
+
+  <input type="file" name="image"><br><br>
+
+  <br><br>
+
+  <button type="submit">Post</button>
+</form>

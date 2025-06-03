@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2>Your Notifications</h2>
+<ul>
+  {% for note in notifications %}
+    <li>{{ note.text }} <small>({{ note.created_at|date:"M d, Y H:i" }})</small></li>
+  {% empty %}
+    <li>No notifications yet.</li>
+  {% endfor %}
+</ul>
+
+<h3>Friend Requests</h3>
+<ul>
+    {% for fr in friend_requests %}
+        <li>
+            {{ fr.from_user.username }} has sent you a friend request.
+            <form method="post" action="{% url 'accept_friend_request' fr.id %}" style="display:inline;">
+                {% csrf_token %}
+                <button type="submit">Accept</button>
+            </form>
+            <form method="post" action="{% url 'decline_friend_request' fr.id %}" style="display:inline;">
+                {% csrf_token %}
+                <button type="submit">Decline</button>
+            </form>
+        </li>
+    {% endfor %}
+</ul>
+
+{% endblock %}

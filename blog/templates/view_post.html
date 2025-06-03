@@ -1,0 +1,95 @@
+<!DOCTYPE html> 
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ post.title }}</title>
+    <style>
+        button {
+            padding: 6px 12px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+            margin: 5px 0;
+        }
+        textarea {
+            width: 100%;
+            padding: 8px;
+        }
+        ul {
+            list-style: none;
+            padding: 0;
+        }
+        li {
+            margin-bottom: 8px;
+        }
+    </style>
+</head>
+<body>
+
+<h1>{{ post.title }}</h1>
+
+<p>{{ post.description }}</p>
+<p>Category: {{ post.category }}</p>
+<p>
+  By <a href="{% url 'user_profile' post.author.username %}">
+      {{ post.author.username }}
+  </a> on {{ post.created_at|date:"F j, Y, g:i a" }}
+</p>
+
+<p>
+    <span>{{ post.like_count }}</span> Likes
+</p>
+
+{% comment %} <form method="post" action="{% url 'toggle_like' post.id %}">
+  {% csrf_token %}
+  <button type="submit">
+      {% if user in post.likes.all %}
+          Unlike
+      {% else %}
+          Like
+      {% endif %}
+  </button>
+</form> {% endcomment %}
+
+
+
+
+<form method="post" action="{% url 'like_post' post.slug %}">
+    {% csrf_token %}
+    {% if has_liked %}
+        <button type="submit" name="unlike">Unlike</button>
+    {% else %}
+        <button type="submit" name="like">Like</button>
+    {% endif %}
+  </form>
+  
+
+{% comment %} <p>{{ post.like_count }} Likes</p> {% endcomment %}
+
+
+<hr>
+
+<h3>Comments ({{ post.comment_count }})</h3>
+
+<ul>
+    {% for comment in comments %}
+        <li><strong>{{ comment.user.username }}</strong>: {{ comment.content }} </li>
+    {% empty %}
+        <li>No comments yet.</li>
+    {% endfor %}
+</ul>
+
+{% if user.is_authenticated %}
+<form method="post" action="{% url 'add_comment' post.slug %}">
+    {% csrf_token %}
+    <textarea name="content" rows="3" required placeholder="Write your comment..."></textarea><br>
+    <button type="submit">Post Comment</button>
+</form>
+
+{% else %}
+    <p><a href="{% url 'login' %}">Log in</a> to comment.</p>
+{% endif %}
+
+</body>
+</html>

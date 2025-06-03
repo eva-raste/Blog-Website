@@ -1,0 +1,22 @@
+{% load socialaccount %}
+
+{% block content %}
+  <h2>Login</h2>
+
+  <!-- Only show login form if the user is not already logged in -->
+  <form method="post" action="{% url 'account_login' %}">
+    {% csrf_token %}
+    {{ form.as_p }} <!-- Render form fields like username and password -->
+    <button type="submit">Login</button>
+  </form>
+
+  <hr>
+  <h3>Or login with:</h3>
+
+  <!-- Render social login providers -->
+  <a href="{% provider_login_url 'google' %}">
+    <button>Sign up with Google</button>
+  </a>
+  
+
+{% endblock %}

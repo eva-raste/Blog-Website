@@ -1,0 +1,128 @@
+{% extends "base.html" %}
+
+{% block title %}All Blogs{% endblock %}
+
+{% block content %}
+<h1>All Blogs</h1>
+
+<div>
+    {% if user.is_authenticated %}
+        <p>Hello, {{ user.username }}!</p>
+        <div>
+            <a href="{% url 'profile' %}"><button>My Profile</button></a>
+            <a href="{% url 'create_post' %}"><button>Create New Post</button></a>
+            <a href="{% url 'notifications' %}"><button>Notifications</button></a>
+        </div>
+    {% else %}
+        <p>
+            <a href="{% url 'login' %}">Login</a> |
+            <a href="{% url 'signup' %}">Sign Up</a>
+        </p>
+    {% endif %}
+</div>
+
+<form method="get" action="{% url 'search' %}">
+    <input type="text" name="q" placeholder="Search blog or user">
+    <button type="submit">Search</button>
+</form>
+
+{% if user.is_authenticated %}
+    <div>
+        <a href="{% url 'chat_history' %}">
+            <button>Chat History</button>
+        </a>
+    </div>
+{% endif %}
+
+<form method="get" action="">
+    <label for="category">Filter by category:</label>
+    <select name="category" id="category" onchange="this.form.submit()">
+        <option value="">-- All Categories --</option>
+        {% for category in categories %}
+            <option value="{{ category.id }}" {% if request.GET.category == category.id|stringformat:'s' %}selected{% endif %}>
+                {{ category.name }}
+            </option>
+        {% endfor %}
+    </select>
+</form>
+
+<hr>
+
+{% for post in posts %}
+    <div class="blog">
+        <h3>{{ post.title }}</h3>
+        <p><strong>By {{ post.author.username }}</strong> on {{ post.created_at|date:"F j, Y, g:i a" }}</p>
+
+        {% if post.image %}
+            <img src="{{ post.image.url }}" width="200" alt="Post image">
+        {% endif %}
+
+        <p>{{ post.description|truncatechars:100 }}</p>
+
+        <p id="like-count-{{ post.id }}">Likes: {{ post.like_count }}</p>
+        <p>Comments: {{ post.comment_count }}</p>
+
+        <form method="post" action="{% url 'toggle_bookmark' post.id %}">
+            {% csrf_token %}
+            <button type="submit">
+                {% if post.id in bookmarked_post_ids %}
+                    Unbookmark
+                {% else %}
+                    Bookmark
+                {% endif %}
+            </button>
+        </form>
+
+        <a href="{% url 'view_post' post.slug %}"><button>View</button></a>
+    </div>
+{% empty %}
+    <p>No blog posts yet.</p>
+{% endfor %}
+
+<div class="pagination">
+    {% if page_obj.has_previous %}
+        <a href="?page={{ page_obj.previous_page_number }}">Previous</a>
+    {% endif %}
+    <span>Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
+    {% if page_obj.has_next %}
+        <a href="?page={{ page_obj.next_page_number }}">Next</a>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block extra_script %}
+<script>
+    const roomName = "{{ room_name }}";
+    const chatSocket = new WebSocket(
+        'ws://' + window.location.host + '/ws/chat/' + roomName + '/'
+    );
+
+    chatSocket.onmessage = function(e) {
+        const data = JSON.parse(e.data);
+        const message = data.message;
+        const username = data.username;
+        const chatBox = document.getElementById('chat-box');
+        chatBox.innerHTML += '<div><b>' + username + ':</b> ' + message + '</div>';
+        chatBox.scrollTop = chatBox.scrollHeight;
+    };
+
+    chatSocket.onclose = function(e) {
+        console.error('Chat socket closed unexpectedly');
+    };
+
+    document.getElementById('chat-message-input').onkeyup = function(e) {
+        if (e.keyCode === 13) {
+            document.getElementById('chat-message-submit').click();
+        }
+    };
+
+    document.getElementById('chat-message-submit').onclick = function(e) {
+        const messageInputDom = document.getElementById('chat-message-input');
+        const message = messageInputDom.value;
+        if (message.trim() !== "") {
+            chatSocket.send(JSON.stringify({ 'message': message }));
+            messageInputDom.value = '';
+        }
+    };
+</script>
+{% endblock %}

@@ -1,0 +1,6 @@
+<h2>My Library</h2>
+{% for bookmark in bookmarks %}
+  <div>
+    <a href="{% url 'view_post' bookmark.post.slug %}">{{ bookmark.post.title }}</a>
+  </div>
+{% endfor %}

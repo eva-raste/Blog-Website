@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Chat Room</title>
+    <meta name="csrf-token" content="{{ csrf_token }}">
+</head>
+<body>
+    <h2>Chat with {{ other_user.username }}</h2>
+
+    <div id="chat-log" style="height: 300px; overflow-y: scroll; border: 1px solid #ccc; padding: 10px;">
+        {% for msg in messages %}
+            <p><strong>{{ msg.user.username }}:</strong> {{ msg.message }}</p>
+        {% endfor %}
+    </div>
+
+    <input id="chat-message-input" type="text" size="100" placeholder="Type a message...">
+    <button id="chat-message-submit">Send</button>
+
+    <script>
+        const username = "{{ request.user.username }}";
+        const recipient = "{{ other_user.username }}";
+
+        const chatSocket = new WebSocket(
+            'ws://' + window.location.host +
+            '/ws/chat/' + recipient + '/'
+        );
+
+        chatSocket.onmessage = function(e) {
+            const data = JSON.parse(e.data);
+            const log = document.querySelector('#chat-log');
+            const newMessage = document.createElement('p');
+            newMessage.innerHTML = `<strong>${data.sender}:</strong> ${data.message}`;
+            log.appendChild(newMessage);
+            log.scrollTop = log.scrollHeight;
+        };
+
+        chatSocket.onclose = function(e) {
+            console.error('Chat socket closed unexpectedly');
+        };
+
+        document.querySelector('#chat-message-submit').onclick = function(e) {
+            const input = document.querySelector('#chat-message-input');
+            const message = input.value;
+            if (message.trim()) {
+                chatSocket.send(JSON.stringify({
+                    'message': message
+                }));
+                input.value = '';
+            }
+        };
+    </script>
+</body>
+</html>

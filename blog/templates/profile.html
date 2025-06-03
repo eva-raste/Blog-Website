@@ -1,0 +1,80 @@
+<h2>Welcome, {{ request.user.username }}!</h2>
+
+<p><strong>Total Friends:</strong> {{ request.user.friends.count }}</p>
+
+<div>
+    <a href="{% url 'create_post' %}"><button>Create New Post</button></a>
+    <a href="{% url 'notifications' %}"><button>View Notifications</button></a>
+</div>
+
+<a href="{% url 'view_bookmarks' %}">
+    <button>View Bookmarked Posts</button>
+</a>
+
+
+<p>Here are your blog posts:</p>
+
+{% for post in posts %}
+    <div class="blog">
+        <h3>{{ post.title }}</h3>
+        <p>{{ post.description|truncatechars:150 }}</p>
+
+        <p><strong>Total Likes:</strong> {{ post.likes.count }}</p>
+        <p><strong>Total Comments:</strong> {{ post.comments.count }}</p>
+
+        {% comment %} {% if post.slug %}
+            <a href="{% url 'view_post' post.slug %}">
+                <button>View</button>
+            </a>
+        {% endif %} {% endcomment %}
+        <a href="{% url 'view_post' post.slug %}"><button>View</button></a>
+        
+        <a href="{% url 'edit_post' post.pk %}">
+            <button>Edit</button>
+        </a>
+        <a href="{% url 'delete_post' post.pk %}">
+            <button>Delete</button>
+        </a>
+    </div>
+{% endfor %}
+
+<a href="{% url 'logout' %}">
+  <button>Logout</button>
+</a>
+
+<div id="chat-box">
+  <div id="messages"></div>
+  <input type="text" id="message-input" placeholder="Type your message...">
+  <button id="send-btn">Send</button>
+</div>
+
+<script>
+  // Replace with the logged-in user's username or the friend you are chatting with
+  const username = "{{ request.user.username }}";
+  const roomName = "chat_" + username;
+  
+  const chatSocket = new WebSocket(
+      'ws://' + window.location.host + '/ws/chat/' + roomName + '/'
+  );
+
+  // Listen for messages from WebSocket
+  chatSocket.onmessage = function(e) {
+      const data = JSON.parse(e.data);
+      const message = data['message'];
+
+      // Append the message to the chat window
+      const messageDiv = document.createElement('div');
+      messageDiv.textContent = message;
+      document.getElementById('messages').appendChild(messageDiv);
+  };
+
+  // Send a message when clicking the button
+  document.getElementById('send-btn').onclick = function() {
+      const messageInput = document.getElementById('message-input');
+      const message = messageInput.value;
+      chatSocket.send(JSON.stringify({
+          'message': message
+      }));
+      messageInput.value = '';  // Clear the input field
+  };
+</script>

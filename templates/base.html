@@ -1,0 +1,166 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{% block title %}My Blog{% endblock %}</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+    {% block style %}
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        nav {
+            background-color: white;
+            padding: 10px 30px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid #eee;
+        }
+
+        .nav-left {
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .nav-center {
+            flex-grow: 1;
+            margin: 0 40px;
+        }
+
+        .search-bar {
+            display: flex;
+            align-items: center;
+            background-color: #f6f6f6;
+            border-radius: 999px;
+            padding: 8px 15px;
+            max-width: 400px;
+        }
+
+        .search-bar input {
+            border: none;
+            background: transparent;
+            outline: none;
+            margin-left: 10px;
+            width: 100%;
+        }
+
+        .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .nav-right a, .nav-right button {
+            background: none;
+            border: none;
+            cursor: pointer;
+            text-decoration: none;
+            color: #555;
+            font-weight: 500;
+        }
+
+        .nav-right a:hover {
+            color: black;
+        }
+
+        .profile-circle {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            background-color: crimson;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+        .dropdown {
+            position: relative;
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            right: 0;
+            top: 40px;
+            background-color: white;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+            border-radius: 5px;
+            overflow: hidden;
+            z-index: 1;
+        }
+
+        .dropdown-content a {
+            display: block;
+            padding: 10px 20px;
+            color: #333;
+            text-decoration: none;
+        }
+
+        .dropdown-content a:hover {
+            background-color: #f2f2f2;
+        }
+    </style>
+    {% endblock %}
+</head>
+<body>
+    <nav>
+        <div class="nav-left">
+            <a href="{% url 'home' %}" style="color: black; text-decoration: none;">Blogfy</a>
+        </div>
+
+        <div class="nav-center">
+            <form class="search-bar" method="get" action="{% url 'search' %}">
+                <i class="fas fa-search"></i>
+                <input type="text" name="q" placeholder="Search">
+            </form>
+        </div>
+
+        <div class="nav-right">
+            {% if user.is_authenticated %}
+                <a href="{% url 'create_post' %}" title="Write"><i class="fas fa-pen"></i> Write</a>
+                <a href="{% url 'notifications' %}" title="Notifications"><i class="fas fa-bell"></i></a>
+
+                <div class="dropdown">
+                    <button class="dropbtn">
+                        <div class="profile-circle">
+                            {{ user.first_name|default:user.username|first|upper }}
+                        </div>
+                    </button>
+                    <div class="dropdown-content">
+                        <a href="{% url 'profile' %}">Profile</a>
+                        <a href="{% url 'logout' %}">Logout</a>
+                    </div>
+                </div>
+            {% else %}
+                <a href="{% url 'login' %}">Login</a>
+                <a href="{% url 'signup' %}">Sign Up</a>
+            {% endif %}
+        </div>
+    </nav>
+
+    <main style="padding: 20px;">
+        {% block content %}{% endblock %}
+    </main>
+
+    {% block script %}
+    <script>
+        const dropbtn = document.querySelector('.dropbtn');
+        const dropdown = document.querySelector('.dropdown-content');
+        dropbtn?.addEventListener('click', (e) => {
+            e.stopPropagation();
+            dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
+        });
+        window.addEventListener('click', function () {
+            dropdown.style.display = 'none';
+        });
+    </script>
+    {% endblock %}
+</body>
+</html>

@@ -1,0 +1,29 @@
+<!-- templates/bookmarked_posts.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Bookmarked Posts</title>
+</head>
+<body>
+    <h2>Your Bookmarked Posts</h2>
+
+    <a href="{% url 'profile' %}"><button>Back to Profile</button></a>
+
+    {% for post in posts %}
+        <div class="blog">
+            <h3>{{ post.title }}</h3>
+            <p>{{ post.description|truncatechars:150 }}</p>
+
+            <p><strong>Total Likes:</strong> {{ post.likes.count }}</p>
+            <p><strong>Total Comments:</strong> {{ post.comments.count }}</p>
+
+            <a href="{% url 'view_post' post.slug %}">
+                <button>View</button>
+            </a>
+        </div>
+    {% empty %}
+        <p>You have no bookmarked posts yet.</p>
+    {% endfor %}
+</body>
+</html>

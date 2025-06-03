@@ -1,0 +1,18 @@
+{% comment %} {% extends "base.html" %} {% endcomment %}
+{% load socialaccount %}
+
+{% block content %}
+  <h2>Sign Up</h2>
+  <form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Register</button>
+  </form>
+  <hr>
+  <h3>Or sign up with:</h3>
+  <a href="{% provider_login_url 'google' %}">
+    <button>Sign up with Google</button>
+  </a>
+  <br>
+  <a href="{% url 'login' %}">Already have an account? Login</a>
+{% endblock %}
