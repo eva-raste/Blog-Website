@@ -41,11 +41,11 @@ Make sure you have the following installed:
 ---
 ## Run Migrations
 
-python manage.py makemigrations
-python manage.py migrate
+- python manage.py makemigrations
+- python manage.py migrate
 
 ---
 ## Start Development Server
 
-python manage.py runserver
-daphne BlogWebsite.asgi:application
+- python manage.py runserver
+- daphne BlogWebsite.asgi:application
