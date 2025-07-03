@@ -1,21 +1,21 @@
-# 📝 Django Blog & Social Platform
+# 📝 Blog Website
 
 A **feature-rich social blogging platform** built with **Django**, combining the essence of blogging and social networking in one application. Users can write blogs, interact through likes, comments, friend requests, and even chat with other users through a real-time chat feature using **Django Channels**.
 
 ---
 
-## 🌟 Key Features
+##  Key Features
 
-- ✅ **User Authentication** (Signup, Login, Logout with support for Google OAuth)
-- 🖼️ **Create/Edit/Delete Blog Posts** with optional image upload and category tagging
-- 📚 **Paginated Blog Feed** with category-based filtering
-- ❤️ **Like, Comment, and Bookmark** blog posts
-- 👥 **Friend System** (Send/Accept/Decline Friend Requests)
-- 🔔 **Real-time Notifications** for comments and friend requests
-- 💬 **Private Chat Messaging** between friends using Django Channels (WebSocket-based)
-- 📌 **Bookmark Manager** to view all your saved posts
-- 🔍 **Search Functionality** to explore posts and users
-- 🧑‍💼 **User Profiles** displaying authored posts and friendship status
+- **User Authentication** (Signup, Login, Logout with support for Google OAuth)
+- **Create/Edit/Delete Blog Posts** with optional image upload and category tagging
+- **Paginated Blog Feed** with category-based filtering
+- **Like, Comment, and Bookmark** blog posts
+- **Friend System** (Send/Accept/Decline Friend Requests)
+- **Real-time Notifications** for comments and friend requests
+- **Private Chat Messaging** between friends using Django Channels (WebSocket-based)
+- **Bookmark Manager** to view all your saved posts
+- **Search Functionality** to explore posts and users
+- **User Profiles** displaying authored posts and friendship status
 
 ---
 
